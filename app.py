@@ -11,6 +11,9 @@ with open("Model/gbm_model.pkl", "rb") as file:
 
 with open("Model/encoders.pkl", "rb") as file:
     label_encoders = pickle.load(file)
+    print(type(label_encoders))
+    print(label_encoders)  # Afficher son contenu
+
 
 with open("Model/scaler.pkl", "rb") as file:
     scaler_standard = pickle.load(file)
@@ -24,12 +27,16 @@ def preprocess_input(data):
     Prépare les données saisies par l'utilisateur pour la prédiction.
     """
     # Supprimer les espaces des chaînes de caractères pour les colonnes catégoriques
-    for col in ['Catégorie', 'Boite vitesse', 'Marque', 'Modèle', 'Énergie']:
+    for col in ['Catégorie', 'Boite vitesse', 'Marque', 'Modèle', 'Energie']:
         data[col] = data[col].strip()
 
     # Encodage des colonnes catégoriques (Label Encoding pour Catégorie et Boite vitesse)
     encoded_data = []
     for col in ['Catégorie', 'Boite vitesse']:
+        if col not in label_encoders:
+         print(f"Erreur: {col} n'est pas dans label_encoders")
+        continue  # Passe à la colonne suivante
+    
         encoder = label_encoders[col]
         encoded_value = encoder.transform([data[col]])[0]
         encoded_data.append(encoded_value)
@@ -43,7 +50,7 @@ def preprocess_input(data):
     one_hot_data.loc[0] = 0  # Initialiser toutes les colonnes à 0
 
     # Mettre à jour les colonnes correspondantes pour One-Hot Encoding
-    for col in ['Marque', 'Modèle', 'Énergie']:
+    for col in ['Marque', 'Modèle', 'Energie']:
         column_name = f"{col}_{data[col]}"
         if column_name in one_hot_columns:
             one_hot_data.at[0, column_name] = 1
@@ -64,7 +71,7 @@ def preprocess_input(data):
 
     # Combiner les données encodées et standardisées avec le One-Hot Encoding
     final_features = np.concatenate((numeric_data.flatten(), encoded_data, one_hot_data.values.flatten())).reshape(1, -1)
-
+    print(final_features)
     return final_features
 
 
@@ -74,25 +81,35 @@ def predict_price():
     prediction = None
     if request.method == "POST":
         try:
-            # Récupération des données saisies par l'utilisateur
+
             user_data = {
-                'Année': float(request.form['Année']),
-                'Kilométrage': int(request.form['Kilométrage']),
-                'Puissance fiscale': int(request.form['Puissance fiscale']),
-                'Puissance (ch.din)': int(request.form['Puissance (ch.din)']),
-                'Cylindrée': int(request.form['Cylindrée']),
-                'Boite vitesse': request.form['Boite vitesse'],
-                'Catégorie': request.form['Catégorie'],
-                'Marque': request.form['Marque'],
-                'Modèle': request.form['Modèle'],
-                'Énergie': request.form['Énergie'],
+                'Année': float(request.form['feature3']),
+                'Kilométrage': int(request.form['feature4']),
+                'Puissance fiscale': int(request.form['feature6']),
+                'Puissance (ch.din)': int(request.form['feature7']),
+                'Cylindrée': int(request.form['feature8']),
+                'Boite vitesse': request.form['feature9'],
+                'Catégorie': request.form['feature10'],
+                'Marque': request.form['feature1'],
+                'Modèle': request.form['feature2'],
+                'Energie': request.form['feature5'],
             }
+
+            # Debugging: Print processed user data
+            #print("Processed user data:", user_data)
 
             # Prétraitement des données
             features = preprocess_input(user_data)
 
+            # Debugging: Print preprocessed features
+            print("Preprocessed features:", features)
+
             # Prédiction avec le modèle
             prediction = gbm_model.predict(features)[0]
+
+            # Debugging: Print prediction result
+            print("Prediction:", prediction)
+
         except Exception as e:
             print(f"Erreur : {e}")
 
