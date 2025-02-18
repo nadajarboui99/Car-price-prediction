@@ -11,8 +11,6 @@ with open("Model/gbm_model.pkl", "rb") as file:
 
 with open("Model/encoders.pkl", "rb") as file:
     label_encoders = pickle.load(file)
-    print(type(label_encoders))
-    print(label_encoders)  # Afficher son contenu
 
 
 with open("Model/scaler.pkl", "rb") as file:
@@ -27,8 +25,12 @@ def preprocess_input(data):
     Prépare les données saisies par l'utilisateur pour la prédiction.
     """
     # Supprimer les espaces des chaînes de caractères pour les colonnes catégoriques
-    for col in ['Catégorie', 'Boite vitesse', 'Marque', 'Modèle', 'Energie']:
-        data[col] = data[col].strip()
+    # Assurer que les colonnes sont bien en minuscules et sans espaces ni tirets
+    # Nettoyer les colonnes avant le One-Hot Encoding
+    data['Marque'] = data['Marque'].str.lower().str.replace(r'[ -]', '', regex=True)
+    data['Modèle'] = data['Modèle'].str.lower().str.replace(r'[ -]', '', regex=True)
+    data['Energie'] = data['Energie'].str.lower()  # Corriger ici en s'assurant que c'est une chaîne et pas une méthode
+ 
 
     # Encodage des colonnes catégoriques (Label Encoding pour Catégorie et Boite vitesse)
     encoded_data = []
@@ -81,7 +83,7 @@ def predict_price():
     prediction = None
     if request.method == "POST":
         try:
-
+            '''
             user_data = {
                 'Année': float(request.form['feature3']),
                 'Kilométrage': int(request.form['feature4']),
@@ -93,13 +95,25 @@ def predict_price():
                 'Marque': request.form['feature1'],
                 'Modèle': request.form['feature2'],
                 'Energie': request.form['feature5'],
+            }'''
+            user_data={
+                'Année': 2024,
+                'Kilométrage': 0,
+                'Puissance fiscale': 9,
+                'Puissance (ch.din)': 150,
+                'Cylindrée': 1444,
+                'Boite vitesse': 'automatique',
+                'Catégorie': 'neuf',
+                'Marque': 'audi',
+                'Modèle': 'q3',
+                'Energie': 'diesel',
             }
 
             # Debugging: Print processed user data
             #print("Processed user data:", user_data)
-
             # Prétraitement des données
             features = preprocess_input(user_data)
+            
 
             # Debugging: Print preprocessed features
             print("Preprocessed features:", features)
