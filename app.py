@@ -83,7 +83,6 @@ def predict_price():
     prediction = None
     if request.method == "POST":
         try:
-            '''
             user_data = {
                 'Année': float(request.form['feature3']),
                 'Kilométrage': int(request.form['feature4']),
@@ -95,24 +94,13 @@ def predict_price():
                 'Marque': request.form['feature1'],
                 'Modèle': request.form['feature2'],
                 'Energie': request.form['feature5'],
-            }'''
-            user_data={
-                'Année': 2024,
-                'Kilométrage': 0,
-                'Puissance fiscale': 9,
-                'Puissance (ch.din)': 150,
-                'Cylindrée': 1444,
-                'Boite vitesse': 'automatique',
-                'Catégorie': 'neuf',
-                'Marque': 'audi',
-                'Modèle': 'q3',
-                'Energie': 'diesel',
             }
-
+    
+            df=pd.DataFrame([user_data])
             # Debugging: Print processed user data
             #print("Processed user data:", user_data)
             # Prétraitement des données
-            features = preprocess_input(user_data)
+            features = preprocess_input(df)
             
 
             # Debugging: Print preprocessed features
