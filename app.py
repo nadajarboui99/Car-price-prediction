@@ -27,9 +27,9 @@ def preprocess_input(data):
     # Supprimer les espaces des chaînes de caractères pour les colonnes catégoriques
     # Assurer que les colonnes sont bien en minuscules et sans espaces ni tirets
     # Nettoyer les colonnes avant le One-Hot Encoding
-    data['Marque'] = data['Marque'].str.lower().str.replace(r'[ -]', '', regex=True)
-    data['Modèle'] = data['Modèle'].str.lower().str.replace(r'[ -]', '', regex=True)
-    data['Energie'] = data['Energie'].str.lower()  # Corriger ici en s'assurant que c'est une chaîne et pas une méthode
+    data['Marque'] = data['Marque'].lower().replace(r'[ -]', '', regex=True)
+    data['Modèle'] = data['Modèle'].lower().replace(r'[ -]', '', regex=True)
+    data['Energie'] = data['Energie'].lower()  # Corriger ici en s'assurant que c'est une chaîne et pas une méthode
  
 
     # Encodage des colonnes catégoriques (Label Encoding pour Catégorie et Boite vitesse)
