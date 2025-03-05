@@ -96,7 +96,7 @@ def predict_price():
                 'Energie': request.form['feature5'],
             }
     
-            df=pd.DataFrame([user_data])
+            #df=pd.DataFrame([user_data])
             # Debugging: Print processed user data
             #print("Processed user data:", user_data)
             # Prétraitement des données
