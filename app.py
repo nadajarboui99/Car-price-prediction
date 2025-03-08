@@ -48,8 +48,8 @@ def preprocess_input(data):
         one_hot_columns = pickle.load(file)
 
     # Créer un DataFrame pour One-Hot Encoding
-    one_hot_data = pd.DataFrame(columns=one_hot_columns)
-    one_hot_data.loc[0] = 0  # Initialiser toutes les colonnes à 0
+    #one_hot_data = pd.DataFrame(columns=one_hot_columns)
+    #one_hot_data.loc[0] = 0  # Initialiser toutes les colonnes à 0
 
     # Mettre à jour les colonnes correspondantes pour One-Hot Encoding
     for col in ['Marque', 'Modèle', 'Energie']:
